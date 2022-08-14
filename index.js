@@ -60,6 +60,14 @@ async function run() {
             const result = await userCollection.updateOne(filter, { $push: { experiences } });
             res.send(result);
         })
+        // project info add api
+        app.patch('/users/projects/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const projects = req.body.project;
+            const result = await userCollection.updateOne(filter, { $push: { projects } });
+            res.send(result);
+        })
 
         // delete experiences
         app.put('/users/experiences/:email', async (req, res) => {
