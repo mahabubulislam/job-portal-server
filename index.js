@@ -101,6 +101,14 @@ async function run() {
             const result = await userCollection.updateOne(filter, { $pull: { links: {name:link} }});
             res.send(result);
         })
+        // delete skills
+        app.put('/users/skills/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const skill = req.body.skill;
+            const result = await userCollection.updateOne(filter, { $pull: { skills: {name:skill} }});
+            res.send(result);
+        })
         // delete project
         app.put('/users/projects/:email', async (req, res) => {
             const email = req.params.email;
