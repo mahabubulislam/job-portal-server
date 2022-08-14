@@ -61,6 +61,14 @@ async function run() {
             res.send(result);
         })
 
+        // delete experiences
+        app.put('/users/experiences/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const experience = req.body.experience;
+            const result = await userCollection.updateOne(filter, { $pull: { experiences: {company:experience} }});
+            res.send(result);
+        })
         // delete education
         app.put('/users/education/:email', async (req, res) => {
             const email = req.params.email;
