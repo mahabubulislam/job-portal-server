@@ -35,21 +35,29 @@ async function run() {
             res.send(result);
         })
 
-        // user education info api
+        //  education info add api
         app.patch('/users/education/:email', async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
-            const education = req.body.education;
-            const result = await userCollection.updateOne(filter, { $push: { education } });
+            const educations = req.body.education;
+            const result = await userCollection.updateOne(filter, { $push: { educations } });
             res.send(result);
         })
 
-        // course info api
+        // course info add api
         app.patch('/users/courses/:email', async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
             const courses = req.body.courses;
             const result = await userCollection.updateOne(filter, { $push: { courses } });
+            res.send(result);
+        })
+        // experience info add api
+        app.patch('/users/experiences/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const experiences = req.body.experience;
+            const result = await userCollection.updateOne(filter, { $push: { experiences } });
             res.send(result);
         })
 
