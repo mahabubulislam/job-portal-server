@@ -76,6 +76,14 @@ async function run() {
             const result = await userCollection.updateOne(filter, { $push: { links } });
             res.send(result);
         })
+        // project info add api
+        app.patch('/users/skills/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const skills = req.body.skill;
+            const result = await userCollection.updateOne(filter, { $push: { skills } });
+            res.send(result);
+        })
 
         // delete experiences
         app.put('/users/experiences/:email', async (req, res) => {
