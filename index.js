@@ -43,7 +43,16 @@ async function run() {
             const result = await userCollection.updateOne(filter, { $push: { education } });
             res.send(result);
         })
-        
+
+        // delete education
+        app.put('/users/education/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const degree = req.body.degree;
+            const result = await userCollection.updateOne(filter, { $pull: { education: {degree:degree} }});
+            res.send(result);
+        })
+
         // get user by email
         app.get('/users/:email', async (req, res) => {
             const email = req.params.email;
