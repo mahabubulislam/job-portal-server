@@ -17,22 +17,41 @@ async function run() {
         await client.connect()
         const userCollection = client.db('jobHaunt').collection('users')
 
+        // user info save
         app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await userCollection.insertOne(user)
             res.send(result)
         })
 
+        // user info update
         app.patch('/users/:email', async (req, res) => {
             const email = req.params.email;
-            const filter = {email:email}
+            const filter = { email: email };
             const updateDoc = {
-                $set: { address: req.body.address, phoneNumber:req.body.phoneNumber }
+                $set: { address: req.body.address, phoneNumber: req.body.phoneNumber }
             }
             const result = await userCollection.updateOne(filter, updateDoc);
-            res.send(result)
+            res.send(result);
         })
 
+        // user education info added
+        app.patch('/users/education/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const education = req.body.education
+            const result = await userCollection.updateOne(filter, { $push: { education } });
+            res.send(result);
+        })
+        
+        // get user by email
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const result = await userCollection.findOne(query);
+            res.send(result);
+
+        })
     }
     finally {
 
