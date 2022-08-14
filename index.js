@@ -77,6 +77,14 @@ async function run() {
             const result = await userCollection.updateOne(filter, { $pull: { experiences: {company:experience} }});
             res.send(result);
         })
+        // delete project
+        app.put('/users/projects/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const project = req.body.project;
+            const result = await userCollection.updateOne(filter, { $pull: { projects: {name:project} }});
+            res.send(result);
+        })
         // delete education
         app.put('/users/education/:email', async (req, res) => {
             const email = req.params.email;
