@@ -8,7 +8,9 @@ const port = process.env.PORT || 5000;
 const app = express()
 
 app.use(express.json())
-app.use(cors())
+app.use(
+    cors({ origin: 'http://localhost:3000' })
+);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.9kz3i.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -20,22 +22,22 @@ async function run() {
         const jobsCollection = client.db('jobHaunt').collection('jobs')
 
         // job post
-        app.post('/jobs', async (req, res)=>{
+        app.post('/jobs', async (req, res) => {
             const jobs = req.body.job;
             const result = await jobsCollection.insertOne(jobs);
             res.send(result)
         })
         // job get
-        app.get('/jobs', async (req, res)=>{
+        app.get('/jobs', async (req, res) => {
             const result = await (await jobsCollection.find().toArray()).reverse();
             res.send(result)
         })
 
         // job details 
-        app.get('/jobs/:id', async (req,res)=>{
+        app.get('/jobs/:id', async (req, res) => {
             const id = req.params.id
-            const query = {_id: ObjectId(id)}
-            const result =await jobsCollection.findOne(query)
+            const query = { _id: ObjectId(id) }
+            const result = await jobsCollection.findOne(query)
             res.send(result)
         })
 
@@ -57,6 +59,20 @@ async function run() {
             res.send(result);
         })
 
+        //  user info add in requiter api
+        app.patch('/jobs/:company', async (req, res) => {
+            const company = req.params.company;
+            const filter = { company: company };
+            const users = req.body.user;
+            const query = { company: company, users:{$in: [users]} }
+            const exists = await jobsCollection.findOne(query)
+            if (exists) {
+                return res.send({ success: false, message: 'exists' })
+            }
+            const result = await jobsCollection.updateOne(filter, { $push: { users } });
+            res.send(result);
+
+        })
         //  education info add api
         app.patch('/users/education/:email', async (req, res) => {
             const email = req.params.email;
@@ -112,7 +128,7 @@ async function run() {
             const email = req.params.email;
             const filter = { email: email };
             const experience = req.body.experience;
-            const result = await userCollection.updateOne(filter, { $pull: { experiences: {company:experience} }});
+            const result = await userCollection.updateOne(filter, { $pull: { experiences: { company: experience } } });
             res.send(result);
         })
         // delete link
@@ -120,7 +136,7 @@ async function run() {
             const email = req.params.email;
             const filter = { email: email };
             const link = req.body.link;
-            const result = await userCollection.updateOne(filter, { $pull: { links: {name:link} }});
+            const result = await userCollection.updateOne(filter, { $pull: { links: { name: link } } });
             res.send(result);
         })
         // delete skills
@@ -128,7 +144,7 @@ async function run() {
             const email = req.params.email;
             const filter = { email: email };
             const skill = req.body.skill;
-            const result = await userCollection.updateOne(filter, { $pull: { skills: {name:skill} }});
+            const result = await userCollection.updateOne(filter, { $pull: { skills: { name: skill } } });
             res.send(result);
         })
         // delete project
@@ -136,7 +152,7 @@ async function run() {
             const email = req.params.email;
             const filter = { email: email };
             const project = req.body.project;
-            const result = await userCollection.updateOne(filter, { $pull: { projects: {name:project} }});
+            const result = await userCollection.updateOne(filter, { $pull: { projects: { name: project } } });
             res.send(result);
         })
         // delete education
@@ -144,7 +160,7 @@ async function run() {
             const email = req.params.email;
             const filter = { email: email };
             const degree = req.body.degree;
-            const result = await userCollection.updateOne(filter, { $pull: { education: {degree:degree} }});
+            const result = await userCollection.updateOne(filter, { $pull: { education: { degree: degree } } });
             res.send(result);
         })
         // delete course
@@ -152,7 +168,7 @@ async function run() {
             const email = req.params.email;
             const filter = { email: email };
             const course = req.body.course;
-            const result = await userCollection.updateOne(filter, { $pull: { courses: {name:course} }});
+            const result = await userCollection.updateOne(filter, { $pull: { courses: { name: course } } });
             res.send(result);
         })
 
