@@ -16,6 +16,14 @@ async function run() {
     try {
         await client.connect()
         const userCollection = client.db('jobHaunt').collection('users')
+        const jobsCollection = client.db('jobHaunt').collection('jobs')
+
+        // job post
+        app.post('/jobs', async (req, res)=>{
+            const jobs = req.body.job;
+            const result = await jobsCollection.insertOne(jobs);
+            res.send(result)
+        })
 
         // user info save
         app.post('/users', async (req, res) => {
