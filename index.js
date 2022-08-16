@@ -23,16 +23,28 @@ async function run() {
 
         // job post
         app.post('/jobs', async (req, res) => {
-            const jobs = req.body.job;
+            const jobs = req.body.job.toLowerCase();
             const result = await jobsCollection.insertOne(jobs);
             res.send(result)
         })
         // job get
         app.get('/jobs', async (req, res) => {
-            const result = await (await jobsCollection.find().toArray()).reverse();
-            res.send(result)
+            const result = await jobsCollection.find().toArray();
+            res.send(result.reverse())
         })
 
+        // search job 
+        app.get('/jobs/search', async (req, res) => {
+            const query = req.query.title
+            const filter = ({
+                title: {
+                    $regex: query,
+                    $options: "i"
+                }
+            })
+            const result = await jobsCollection.find(filter).toArray()
+            res.send(result)
+        })
         // job details 
         app.get('/jobs/:id', async (req, res) => {
             const id = req.params.id
@@ -64,7 +76,7 @@ async function run() {
             const company = req.params.company;
             const filter = { company: company };
             const users = req.body.user;
-            const query = { company: company, users:{$in: [users]} }
+            const query = { company: company, users: { $in: [users] } }
             const exists = await jobsCollection.findOne(query)
             if (exists) {
                 return res.send({ success: false, message: 'exists' })
