@@ -20,12 +20,24 @@ async function run() {
         await client.connect()
         const userCollection = client.db('jobHaunt').collection('users')
         const jobsCollection = client.db('jobHaunt').collection('jobs')
+        const reviewsCollection = client.db('jobHaunt').collection('reviews')
 
         // job post
         app.post('/jobs', async (req, res) => {
-            const jobs = req.body.job.toLowerCase();
+            const jobs = req.body.job;
             const result = await jobsCollection.insertOne(jobs);
             res.send(result)
+        })
+        // review post
+        app.post('/reviews', async (req, res) => {
+            const reviews = req.body.review;
+            const result = await reviewsCollection.insertOne(reviews);
+            res.send(result)
+        })
+        // review get
+        app.get('/reviews', async (req, res) => {
+            const result = await reviewsCollection.find().toArray();
+            res.send(result.reverse())
         })
         // job get
         app.get('/jobs', async (req, res) => {
