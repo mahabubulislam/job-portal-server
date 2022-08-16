@@ -9,7 +9,7 @@ const app = express()
 
 app.use(express.json())
 app.use(
-    cors({ origin: 'http://localhost:3000' })
+    cors({ origin: 'https://job-haunt.web.app' })
 );
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.9kz3i.mongodb.net/?retryWrites=true&w=majority`;
